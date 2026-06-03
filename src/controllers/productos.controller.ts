@@ -3,6 +3,7 @@ import { Request, Response } from 'express'
 import cloudinary from '../lib/cloudinary'
 import { NegocioRepository } from '../repositories/NegocioRepository'
 import { ProductRepository } from '../repositories/ProductRepository'
+import { ProductCategoryRepository } from '../repositories/ProductCategoryRepository'
 import { CreateProductUseCase } from '../use-cases/productos/CreateProductUseCase'
 import { UpdateProductUseCase } from '../use-cases/productos/UpdateProductUseCase'
 import { DeleteProductUseCase } from '../use-cases/productos/DeleteProductUseCase'
@@ -11,8 +12,9 @@ import { ListProductsByBusinessUseCase } from '../use-cases/productos/ListProduc
 
 const negocioRepo = new NegocioRepository()
 const productRepo = new ProductRepository()
-const createProductUseCase = new CreateProductUseCase(productRepo, negocioRepo)
-const updateProductUseCase = new UpdateProductUseCase(productRepo, negocioRepo)
+const productCategoryRepo = new ProductCategoryRepository()
+const createProductUseCase = new CreateProductUseCase(productRepo, negocioRepo, productCategoryRepo)
+const updateProductUseCase = new UpdateProductUseCase(productRepo, negocioRepo, productCategoryRepo)
 const deleteProductUseCase = new DeleteProductUseCase(productRepo)
 const getProductUseCase = new GetProductUseCase(productRepo)
 const listProductsByBusinessUseCase = new ListProductsByBusinessUseCase(productRepo)
@@ -74,6 +76,32 @@ export const listProductsByBusinessController = async (
       negocioId: negocio.id,
       page,
       limit,
+    })
+    res.json(result)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Error interno' })
+  }
+}
+
+export const listPublicProductsByBusinessController = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const negocio = await negocioRepo.findByIdOrSlug(req.params.id)
+    if (!negocio) {
+      res.status(404).json({ error: 'Negocio no encontrado' })
+      return
+    }
+
+    const page = req.query.page ? parseInt(req.query.page as string, 10) : 1
+    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 50
+    const result = await listProductsByBusinessUseCase.execute({
+      negocioId: negocio.id,
+      page,
+      limit,
+      onlyActive: true,
     })
     res.json(result)
   } catch (err) {

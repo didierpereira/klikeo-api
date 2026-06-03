@@ -1,4 +1,5 @@
 import { INegocioRepository } from '../../repositories/interfaces/INegocioRepository'
+import { IProductCategoryRepository } from '../../repositories/interfaces/IProductCategoryRepository'
 import { ProductDomain } from '../../domain/Product'
 import {
   IProductRepository,
@@ -31,6 +32,7 @@ export class UpdateProductUseCase {
   constructor(
     private readonly productRepo: IProductRepository,
     private readonly negocioRepo: INegocioRepository,
+    private readonly categoryRepo: IProductCategoryRepository,
   ) {}
 
   async execute(
@@ -61,6 +63,13 @@ export class UpdateProductUseCase {
     if (input.category !== undefined) {
       if (!input.category.trim()) {
         throw new Error('La categoría del producto es requerida')
+      }
+      const productCategory = await this.categoryRepo.findByBusinessAndName(
+        product.negocioId,
+        input.category.trim(),
+      )
+      if (!productCategory || !productCategory.isActive) {
+        throw new Error('La categoría del producto no existe o no está activa')
       }
       updateData.category = input.category.trim()
     }

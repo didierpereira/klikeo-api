@@ -5,6 +5,7 @@ import {
   deleteProductController,
   getProductController,
   listProductsByBusinessController,
+  listPublicProductsByBusinessController,
   updateProductController,
   uploadProductImageController,
 } from '../controllers/productos.controller'
@@ -14,6 +15,7 @@ const upload = multer({ storage: multer.memoryStorage() })
 const router = Router()
 
 router.get('/negocios/:id/productos', authenticate, listProductsByBusinessController)
+router.get('/negocios/:id/productos/public', listPublicProductsByBusinessController)
 router.post('/negocios/:id/productos', authenticate, createProductController)
 router.get('/productos/:id', getProductController)
 router.put('/productos/:id', authenticate, updateProductController)

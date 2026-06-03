@@ -4,6 +4,7 @@ export interface ListProductsByBusinessInput {
   negocioId: string
   page?: number
   limit?: number
+  onlyActive?: boolean
 }
 
 export class ListProductsByBusinessUseCase {
@@ -13,6 +14,7 @@ export class ListProductsByBusinessUseCase {
     return this.productRepo.listByBusiness(input.negocioId, {
       page: input.page,
       limit: input.limit,
+      onlyActive: input.onlyActive,
     })
   }
 }

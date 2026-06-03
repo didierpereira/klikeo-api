@@ -6,6 +6,7 @@ import { connectDB } from "./db"
 import authRouter from "../routes/auth.routes"
 import bussinesRouter from "../routes/negocios.routes"
 import productRouter from "../routes/productos.routes"
+import productCategoryRouter from "../routes/producto-categorias.routes"
 import webhooksRouter from "../routes/webhhoks.routes"
 import adminRouter from "../routes/admin.routes"
 import cors from "cors"
@@ -40,6 +41,7 @@ export function createApp() {
   app.use("/api/auth", authRouter)
   app.use("/api/negocios", bussinesRouter)
   app.use("/api", productRouter)
+  app.use("/api", productCategoryRouter)
   app.use("/api/webhooks", webhooksRouter)
   app.use("/api/admin", adminRouter)
 

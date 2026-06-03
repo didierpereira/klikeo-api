@@ -1,4 +1,5 @@
 import { INegocioRepository } from '../../repositories/interfaces/INegocioRepository'
+import { IProductCategoryRepository } from '../../repositories/interfaces/IProductCategoryRepository'
 import { ProductDomain } from '../../domain/Product'
 import { CreateProductData, IProductRepository } from '../../repositories/interfaces/IProductRepository'
 
@@ -28,6 +29,7 @@ export class CreateProductUseCase {
   constructor(
     private readonly productRepo: IProductRepository,
     private readonly negocioRepo: INegocioRepository,
+    private readonly categoryRepo: IProductCategoryRepository,
   ) {}
 
   async execute(input: CreateProductInput, negocioId: string, ownerId: string): Promise<ProductDomain> {
@@ -52,6 +54,11 @@ export class CreateProductUseCase {
     }
     if (negocio.ownerId !== ownerId) {
       throw new Error('FORBIDDEN')
+    }
+
+    const productCategory = await this.categoryRepo.findByBusinessAndName(negocioId, category.trim())
+    if (!productCategory || !productCategory.isActive) {
+      throw new Error('La categoría del producto no existe o no está activa')
     }
 
     const data: CreateProductData = {

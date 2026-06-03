@@ -114,13 +114,17 @@ export class ProductRepository implements IProductRepository {
     const page = filter.page ?? 1
     const limit = filter.limit ?? 20
     const skip = (page - 1) * limit
+    const query: Record<string, unknown> = { negocioId, isDeleted: false }
+    if (filter.onlyActive) {
+      query.isActive = true
+    }
 
     const [data, total] = await Promise.all([
-      ProductModel.find({ negocioId, isDeleted: false })
+      ProductModel.find(query)
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit),
-      ProductModel.countDocuments({ negocioId, isDeleted: false }),
+      ProductModel.countDocuments(query),
     ])
 
     return {

@@ -31,6 +31,7 @@ export interface UpdateProductData {
 export interface ListProductsFilter {
   page?: number
   limit?: number
+  onlyActive?: boolean
 }
 
 export interface ListProductsResult {
