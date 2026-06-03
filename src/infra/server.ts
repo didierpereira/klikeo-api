@@ -5,6 +5,7 @@ import { connectDB } from "./db"
 // import { registerRoutes } from "./routes"
 import authRouter from "../routes/auth.routes"
 import bussinesRouter from "../routes/negocios.routes"
+import productRouter from "../routes/productos.routes"
 import webhooksRouter from "../routes/webhhoks.routes"
 import adminRouter from "../routes/admin.routes"
 import cors from "cors"
@@ -38,6 +39,7 @@ export function createApp() {
 
   app.use("/api/auth", authRouter)
   app.use("/api/negocios", bussinesRouter)
+  app.use("/api", productRouter)
   app.use("/api/webhooks", webhooksRouter)
   app.use("/api/admin", adminRouter)
 
